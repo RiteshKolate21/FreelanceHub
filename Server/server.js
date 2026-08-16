@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
@@ -26,6 +27,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/freelancers", freelancerRoutes);
+app.use("/api/chats", chatRoutes);
+
+
 
 // Test route
 app.get("/", (req, res) => {
