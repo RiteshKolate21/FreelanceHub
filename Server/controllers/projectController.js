@@ -89,6 +89,105 @@ export const getProjectById = async (req, res) => {
     }
 };
 
+export const updateProject = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const {
+            title,
+            description,
+            budget,
+            skills,
+            deadline
+        } = req.body;
+
+        const project = await Project.findById(id);
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found"
+            });
+        }
+
+        // Only project owner can update
+        if (project.clientId.toString() !== req.user.userId) {
+            return res.status(403).json({
+                message: "You are not authorized to update this project"
+            });
+        }
+
+        // Only open projects can be updated
+        if (project.status !== "Open") {
+            return res.status(400).json({
+                message: "Only open projects can be updated"
+            });
+        }
+
+        // Update only provided fields
+        if (title !== undefined) project.title = title;
+        if (description !== undefined) project.description = description;
+        if (budget !== undefined) project.budget = budget;
+        if (skills !== undefined) project.skills = skills;
+        if (deadline !== undefined) project.deadline = deadline;
+
+        await project.save();
+
+        res.status(200).json({
+            message: "Project updated successfully",
+            project
+        });
+
+    } catch (error) {
+        console.error("Update project error:", error);
+
+        res.status(500).json({
+            message: "Failed to update project"
+        });
+    }
+};
+
+
+export const deleteProject = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const project = await Project.findById(id);
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found"
+            });
+        }
+
+        // Only project owner can delete
+        if (project.clientId.toString() !== req.user.userId) {
+            return res.status(403).json({
+                message: "You are not authorized to delete this project"
+            });
+        }
+
+        // Only open projects can be deleted
+        if (project.status !== "Open") {
+            return res.status(400).json({
+                message: "Only open projects can be deleted"
+            });
+        }
+
+        await Project.findByIdAndDelete(id);
+
+        res.status(200).json({
+            message: "Project deleted successfully"
+        });
+
+    } catch (error) {
+        console.error("Delete project error:", error);
+
+        res.status(500).json({
+            message: "Failed to delete project"
+        });
+    }
+};
+
 export const submitProject = async (req, res) => {
     try {
         const { projectId } = req.params;

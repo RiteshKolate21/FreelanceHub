@@ -4,6 +4,8 @@ import {
     createProject,
     getAllProjects,
     getProjectById,
+    updateProject,
+    deleteProject,
     submitProject,
     completeProject
 } from "../controllers/projectController.js";
@@ -12,12 +14,15 @@ import authMiddleware from "../middleware/authMiddleware.js";
 import authorizeRoles from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
-// Get all projects
+
+
+// Get all open projects
 router.get(
     "/",
     authMiddleware,
     getAllProjects
 );
+
 
 // Get single project
 router.get(
@@ -25,6 +30,7 @@ router.get(
     authMiddleware,
     getProjectById
 );
+
 
 // Client creates a project
 router.post(
@@ -34,6 +40,25 @@ router.post(
     createProject
 );
 
+
+// Client updates project
+router.put(
+    "/:id",
+    authMiddleware,
+    authorizeRoles("Client"),
+    updateProject
+);
+
+
+// Client deletes project
+router.delete(
+    "/:id",
+    authMiddleware,
+    authorizeRoles("Client"),
+    deleteProject
+);
+
+
 // Freelancer submits completed project
 router.patch(
     "/:projectId/submit",
@@ -41,6 +66,7 @@ router.patch(
     authorizeRoles("Freelancer"),
     submitProject
 );
+
 
 // Client completes submitted project
 router.patch(
