@@ -88,3 +88,94 @@ export const getProjectById = async (req, res) => {
         });
     }
 };
+
+export const submitProject = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+
+        const project = await Project.findById(projectId);
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found"
+            });
+        }
+
+        // Only the assigned freelancer can submit the project
+        if (
+            !project.freelancerId ||
+            project.freelancerId.toString() !== req.user.userId
+        ) {
+            return res.status(403).json({
+                message: "You are not authorized to submit this project"
+            });
+        }
+
+        // Project must be in progress
+        if (project.status !== "In Progress") {
+            return res.status(400).json({
+                message: "Only projects in progress can be submitted"
+            });
+        }
+
+        project.status = "Submitted";
+
+        await project.save();
+
+        res.status(200).json({
+            message: "Project submitted successfully",
+            project
+        });
+
+    } catch (error) {
+        console.error("Submit project error:", error);
+
+        res.status(500).json({
+            message: "Failed to submit project"
+        });
+    }
+};
+
+export const completeProject = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+
+        const project = await Project.findById(projectId);
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found"
+            });
+        }
+
+        // Only project owner can complete it
+        if (project.clientId.toString() !== req.user.userId) {
+            return res.status(403).json({
+                message: "You are not authorized to complete this project"
+            });
+        }
+
+        // Project must be submitted first
+        if (project.status !== "Submitted") {
+            return res.status(400).json({
+                message: "Only submitted projects can be completed"
+            });
+        }
+
+        project.status = "Completed";
+
+        await project.save();
+
+        res.status(200).json({
+            message: "Project completed successfully",
+            project
+        });
+
+    } catch (error) {
+        console.error("Complete project error:", error);
+
+        res.status(500).json({
+            message: "Failed to complete project"
+        });
+    }
+};

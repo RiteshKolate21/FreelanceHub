@@ -5,6 +5,9 @@ import connectDB from "./config/db.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
+import applicationRoutes from "./routes/applicationRoutes.js";
+
+import freelancerRoutes from "./routes/freelancerRoutes.js";
 
 dotenv.config();
 
@@ -18,8 +21,11 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/applications", applicationRoutes);
+app.use("/api/freelancers", freelancerRoutes);
 
 // Test route
 app.get("/", (req, res) => {

@@ -3,7 +3,9 @@ import express from "express";
 import {
     createProject,
     getAllProjects,
-    getProjectById
+    getProjectById,
+    submitProject,
+    completeProject
 } from "../controllers/projectController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -31,4 +33,22 @@ router.post(
     authorizeRoles("Client"),
     createProject
 );
+
+// Freelancer submits completed project
+router.patch(
+    "/:projectId/submit",
+    authMiddleware,
+    authorizeRoles("Freelancer"),
+    submitProject
+);
+
+// Client completes submitted project
+router.patch(
+    "/:projectId/complete",
+    authMiddleware,
+    authorizeRoles("Client"),
+    completeProject
+);
+
+
 export default router;
