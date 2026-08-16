@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -17,7 +18,26 @@ const authMiddleware = (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    req.user = decoded;
+    // Fetch user to ensure user exists and is not blocked
+    const user = await User.findById(decoded.userId).select("-password");
+    if (!user) {
+      return res.status(401).json({
+        message: "User no longer exists"
+      });
+    }
+
+    if (user.isBlocked) {
+      return res.status(403).json({
+        message: "Your account has been disabled by an administrator"
+      });
+    }
+
+    req.user = {
+      userId: user._id.toString(),
+      userType: user.userType,
+      username: user.username,
+      email: user.email
+    };
 
     next();
 

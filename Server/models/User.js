@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["Client", "Freelancer", "Admin"],
       required: true
+    },
+
+    isBlocked: {
+      type: Boolean,
+      default: false
     }
   },
   {

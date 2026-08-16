@@ -116,3 +116,34 @@ export const loginUser = async (req, res) => {
     });
   }
 };
+
+// GET CURRENT USER
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Authentication successful",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        userType: user.userType,
+        isBlocked: user.isBlocked,
+        createdAt: user.createdAt
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message
+    });
+  }
+};
