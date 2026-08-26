@@ -141,5 +141,5 @@ npm run dev
 Run automated end-to-end backend tests:
 ```bash
 cd Server
-node test_backend.js
+node server.js
 ```
