@@ -14,7 +14,7 @@ export const setAuthToken = (token) => {
 
 export const apiFetch = async (endpoint, options = {}) => {
   const token = getAuthToken();
-  
+
   const headers = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -26,15 +26,21 @@ export const apiFetch = async (endpoint, options = {}) => {
     headers
   };
 
-  if (config.body && typeof config.body === "object" && !(config.body instanceof FormData)) {
+  if (
+    config.body &&
+    typeof config.body === "object" &&
+    !(config.body instanceof FormData)
+  ) {
     config.body = JSON.stringify(config.body);
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, config);
+  const response = await fetch(`${BASE_URL}${endpoint}`, config);
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const error = new Error(data.message || "An unexpected error occurred");
+    const error = new Error(
+      data.message || "An unexpected error occurred"
+    );
     error.status = response.status;
     error.data = data;
     throw error;
