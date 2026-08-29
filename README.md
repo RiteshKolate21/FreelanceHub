@@ -1,4 +1,4 @@
-# FreelanceHub : Editorial Freelance Marketplace
+# FreelanceHub : Connect freelancers with clients seamlessly
 
 **FreelanceHub** is a modern MERN stack freelance marketplace connecting Clients, Freelancers, and Administrators.
 
